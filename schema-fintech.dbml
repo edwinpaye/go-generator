@@ -1,0 +1,45 @@
+Project FintechDomain {
+  Note: 'Fintech Core Banking & Digital Wallet DBML Schema'
+}
+
+Enum bank.AccountType {
+  SAVINGS
+  CHECKING
+  INVESTMENT
+  CREDIT
+}
+
+Enum bank.TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+TablePartial Audit {
+  created_at timestamp [not null, default: 'now()']
+  updated_at timestamp [not null]
+}
+
+Table bank.accounts {
+  id uuid [pk]
+  account_number varchar(50) [not null, unique]
+  type bank.AccountType [not null, default: 'CHECKING']
+  balance decimal(18,4) [not null, default: '0.0000']
+  currency varchar(3) [not null, default: 'USD']
+  mixin Audit
+}
+
+Table bank.transactions {
+  id uuid [pk]
+  account_id uuid [not null, ref: > bank.accounts.id]
+  amount decimal(18,4) [not null]
+  status bank.TransactionStatus [not null, default: 'PENDING']
+  reference_code varchar(100) [unique]
+  mixin Audit
+}
+
+TableGroup Banking {
+  bank.accounts
+  bank.transactions
+}

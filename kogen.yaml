@@ -1,0 +1,11 @@
+project_name: "ecommerce-api"
+package_name: "com.enterprise.ecommerce"
+target_dir: "./output/ecommerce-api"
+database: "postgres"
+architecture: "hexagonal"
+native_target: "graalvm"
+include_in_memory: true
+include_openapi: true
+include_docker: true
+include_migrations: true
+server_port: 8080

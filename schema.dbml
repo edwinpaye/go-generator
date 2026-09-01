@@ -1,0 +1,44 @@
+Project ECommerceBackend {
+  Note: 'Enterprise-Grade Microservice DBML Schema'
+}
+
+Enum auth.UserStatus {
+  ACTIVE [note: 'Account is active']
+  SUSPENDED [note: 'Suspended by admin']
+  PENDING
+}
+
+TablePartial AuditFields {
+  created_at timestamp [not null, default: 'now()']
+  updated_at timestamp [not null]
+}
+
+Table auth.users {
+  id uuid [pk, increment]
+  email varchar(255) [not null, unique]
+  status auth.UserStatus [default: 'ACTIVE']
+  mixin AuditFields
+
+  indexes {
+    email [unique, name: 'idx_user_email']
+    (status, created_at) [name: 'idx_status_created']
+  }
+}
+
+Table orders {
+  id uuid [pk]
+  user_id uuid [not null, ref: > auth.users.id]
+  total_amount decimal(10,2) [not null]
+  status varchar(50) [not null, default: 'CREATED']
+  mixin AuditFields
+}
+
+TableGroup AuthDomain {
+  auth.users
+}
+
+TableGroup OrderDomain {
+  orders
+}
+
+Ref fk_orders_user: orders.user_id > auth.users.id [delete: cascade]
