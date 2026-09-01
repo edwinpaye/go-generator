@@ -13,6 +13,23 @@ func generateApplicationLayer(doc *domain.DBMLDocument, spec *domain.GeneratorSp
 	pkg := SanitizePackageName(spec.PackageName)
 	pkgPath := strings.ReplaceAll(pkg, ".", "/")
 
+	// 0. Shared PaginatedResponse DTO
+	paginatedDtoPath := filepath.Join("src/main/kotlin", pkgPath, "application/dto/PaginatedResponse.kt")
+	paginatedDtoCode := fmt.Sprintf(`package %s.application.dto
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PaginatedResponse<T>(
+    val items: List<T>,
+    val page: Int,
+    val size: Int,
+    val total: Long,
+    val totalPages: Int
+)
+`, pkg)
+	files = append(files, domain.GeneratedFile{Path: paginatedDtoPath, Content: paginatedDtoCode})
+
 	for _, tbl := range doc.Tables {
 		entityName := ToPascalCase(tbl.Name)
 		pkCol := GetPKColumn(tbl)
@@ -68,15 +85,6 @@ data class Update%sRequest(
 @Serializable
 data class %sResponse(
 %s
-)
-
-@Serializable
-data class PaginatedResponse<T>(
-    val items: List<T>,
-    val page: Int,
-    val size: Int,
-    val total: Long,
-    val totalPages: Int
 )
 `, pkg, enumImport, entityName, strings.Join(createProps, ",\n"), entityName, strings.Join(updateProps, ",\n"), entityName, strings.Join(respProps, ",\n"))
 

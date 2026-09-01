@@ -24,6 +24,11 @@ func generateBuildAndBootstrap(doc *domain.DBMLDocument, spec *domain.GeneratorS
 group = "%s"
 version = "1.0.0"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 repositories {
     mavenCentral()
 }
@@ -36,6 +41,14 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.8")
     implementation("io.ktor:ktor-server-status-pages-jvm:2.3.8")
     implementation("io.ktor:ktor-server-cors-jvm:2.3.8")
+
+    // JetBrains Exposed ORM & Database Driver Infrastructure
+    implementation("org.jetbrains.exposed:exposed-core:0.47.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.47.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.47.0")
+    implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("org.postgresql:postgresql:42.7.1")
 
     // Logging & Diagnostics
     implementation("ch.qos.logback:logback-classic:1.4.14")
